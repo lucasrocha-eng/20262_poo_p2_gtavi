@@ -1,5 +1,6 @@
 package br.com.fatec;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import javax.swing.JOptionPane;
@@ -87,7 +88,27 @@ public class Jogo {
                 JOptionPane.showMessageDialog(null, "Partida salva! Pontuacao de " + jogador.getNome() + ": " + jogador.getPontos());
 
             } else if (opcao == 2) {
-                JOptionPane.showMessageDialog(null, "Ranking em construcao...");
+                List<Partida> partidas = dao.listar();
+
+                Collections.sort(partidas, (p1, p2) -> {
+                    if (p1.getPontuacao() != p2.getPontuacao()) {
+                        return Integer.compare(p2.getPontuacao(), p1.getPontuacao());
+                    }
+                    return Integer.compare(p2.getCodigo(), p1.getCodigo());
+                });
+
+                StringBuilder sb = new StringBuilder();
+                sb.append("Ranking (Top 5):\n");
+
+                int limite = partidas.size() < 5 ? partidas.size() : 5;
+                for (int i = 0; i < limite; i++) {
+                    Partida p = partidas.get(i);
+                    sb.append((i + 1)).append(". ")
+                      .append(p.getJogador()).append(" - ")
+                      .append(p.getPontuacao()).append(" pontos\n");
+                }
+
+                JOptionPane.showMessageDialog(null, sb.toString());
             }
         }
     }
